@@ -1,4 +1,5 @@
 ﻿using ImageMagick;
+using System;
 
 namespace TileCutter
 {
@@ -11,8 +12,8 @@ namespace TileCutter
         public ImageSettings(int zoom, int chunks, MagickImage image)
         {
             Zoom = zoom;
-            Chunks = chunks;
-            Image = image;
+            Chunks = chunks > 0 ? chunks : throw new ArgumentNullException($"{nameof(chunks)} can't be negative", nameof(chunks));
+            Image = image ?? throw new ArgumentNullException($"{nameof(image)} can't be null", nameof(image));
         }
     }
 }
