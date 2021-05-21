@@ -1,29 +1,24 @@
 ﻿using ImageMagick;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace TileCutter
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void selectButton_Click(object sender, EventArgs e)
         {
-            var dialog = openFileDialog1;
+            var dialog = openFileDialog;
 
             using (dialog)
             {
@@ -34,17 +29,17 @@ namespace TileCutter
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    label2.Text = dialog.FileName;
+                    selectStatusLabel.Text = dialog.FileName;
                 }
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void cutButton_Click(object sender, EventArgs e)
         {
-            var path = openFileDialog1.FileName;
-            var tile_size = numericUpDown1.Text.Length > 0 ? (int)numericUpDown1.Value : 0;
-            var bg_color = textBox2.Text;
-            var extension = comboBox1.Text;
+            var path = openFileDialog.FileName;
+            var tile_size = tabSizeValue.Text.Length > 0 ? (int)tabSizeValue.Value : 0;
+            var bg_color = backgroundColorValue.Text;
+            var extension = extensionValue.Text;
 
             clearErrorLabels();
             var checkResult = checkParams(path, tile_size, bg_color);
@@ -122,7 +117,7 @@ namespace TileCutter
             logToList("Max image size: " + resized_max.Width + " : " + resized_max.Height);
 
             // Calculate chunks number for every zoom level
-            var images = new List<MyImage>();
+            var images = new List<ImageSettings>();
             var zoom = 0;
             var exp = 1;
             while (exp <= max_exp)
@@ -131,7 +126,7 @@ namespace TileCutter
                 var zoom_size = exp * tile_size;
                 MagickImage new_image = (MagickImage)resized_max.Clone();
                 new_image.Resize(zoom_size, zoom_size);
-                images.Add(new MyImage(zoom, exp, new_image));
+                images.Add(new ImageSettings(zoom, exp, new_image));
                 zoom += 1;
                 exp *= 2;
             }
@@ -147,7 +142,7 @@ namespace TileCutter
 
             // Calculate progressbar blocks
             int progressBarblocksCount = 0;
-            images.ForEach(delegate (MyImage img)
+            images.ForEach(delegate (ImageSettings img)
             {
                 int chunks_count = img.Chunks;
                 for (x = 0; x < chunks_count; x++)
@@ -159,12 +154,12 @@ namespace TileCutter
                 }
             });
             logToList("progressBar blocksCount: " + progressBarblocksCount);
-            progressBar1.Maximum = progressBarblocksCount;
-            progressBar1.Value = 0;
+            progressBar.Maximum = progressBarblocksCount;
+            progressBar.Value = 0;
 
             // Cutting the tiles and save to folders
             int tiles_done = 0;
-            images.ForEach(delegate (MyImage img)
+            images.ForEach(delegate (ImageSettings img)
             {
                 int chunks_count = img.Chunks;
                 logToList("Making tiles for zoom " + img.Zoom);
@@ -175,7 +170,7 @@ namespace TileCutter
                     while(y < chunks_count)
                     {
                         makeTile(x, y, img, tile_size);
-                        progressBar1.Value++;
+                        progressBar.Value++;
                         tiles_done++;
                         y++;
                     }
@@ -187,7 +182,7 @@ namespace TileCutter
             logToList("Time: " + sw.Elapsed.ToString());
         }
 
-        private void makeTile(int x, int y, MyImage img, int tile_size)
+        private void makeTile(int x, int y, ImageSettings img, int tile_size)
         {
             int x_offset = x * tile_size;
             int y_offset = y * tile_size;
@@ -212,7 +207,7 @@ namespace TileCutter
 
         private void logToList(string text)
         {
-            listBox1.Items.Add(text);
+            logListBox.Items.Add(text);
         }
     }
 }
