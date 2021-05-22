@@ -170,9 +170,9 @@ namespace TileCutter
 
         private void WriteTile(MagickImage chunk, int x, int y, int zoom)
         {
-            string zPath = "./tiles/" + zoom;
-            if (!Directory.Exists(zPath))
-                Directory.CreateDirectory(zPath);
+            string zoomPath = $"./tiles/{zoom}";
+            if (!Directory.Exists(zoomPath))
+                Directory.CreateDirectory(zoomPath);
 
             string xPath = $"./tiles/{zoom}/{x}";
             if (!Directory.Exists(xPath))
