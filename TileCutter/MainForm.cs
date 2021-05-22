@@ -73,9 +73,7 @@ namespace TileCutter
             var rows = (int)Math.Ceiling((decimal)height / tileSize);
             Log($"Columns: {columns}, rows: {rows}");
 
-            // Calculate max zoom level
-            int[] anArray = { columns, rows };
-            var maxChunksCount = anArray.Max();
+            var maxChunksCount = Math.Max(columns, rows);
             Log($"Calculated chunks count: {maxChunksCount}");
             int maxExp = 1;
             while (maxExp < maxChunksCount)
@@ -105,20 +103,21 @@ namespace TileCutter
             }
 
             // Create a folder if not exist and empty old tiles
-            string tilesPath = "./tiles";
+            const string tilesPath = "./tiles";
             if (!Directory.Exists(tilesPath))
                 Directory.CreateDirectory(tilesPath);
             DirectoryInfo tilesDirectory = new DirectoryInfo(tilesPath);
-            foreach (FileInfo file in tilesDirectory.GetFiles()) file.Delete();
+            foreach (FileInfo file in tilesDirectory.GetFiles())
+                file.Delete();
 
             int x = 0;
             int y = 0;
 
             // Calculate progressbar blocks
             int progressBarblocksCount = 0;
-            images.ForEach((ImageSettings img) =>
+            images.ForEach((ImageSettings imageSettings) =>
             {
-                int chunks_count = img.Chunks;
+                int chunks_count = imageSettings.Chunks;
                 for (x = 0; x < chunks_count; x++)
                     for (y = 0; y < chunks_count; y++)
                         progressBarblocksCount++;
@@ -128,21 +127,22 @@ namespace TileCutter
             progressBar.Value = 0;
 
             // Cutting the tiles and save to folders
-            int tiles_done = 0;
-            images.ForEach((ImageSettings img) =>
+            int tilesDone = 0;
+            images.ForEach((ImageSettings imageSettings) =>
             {
-                int chunks_count = img.Chunks;
-                Log($"Making tiles for zoom {img.Zoom}");
+                int chunksCount = imageSettings.Chunks;
+                Log($"Making tiles for zoom {imageSettings.Zoom}");
                 x = 0;
-                while (x < chunks_count)
+                while (x < chunksCount)
                 {
                     y = 0;
-                    while (y < chunks_count)
+                    while (y < chunksCount)
                     {
-                        var chunk = TileTools.MakeTile(img.Image, new Point(x, y), tileSize);
-                        TileTools.WriteTile(chunk, new Point(x, y), img.Zoom);
+                        var chunk = TileTools.MakeTile(imageSettings.Image, new Point(x, y), tileSize);
+                        string fullPath = TileTools.CreateDirectoryStructure(new Point(x, y), imageSettings.Zoom);
+                        chunk.Write(fullPath);
                         progressBar.Value++;
-                        tiles_done++;
+                        tilesDone++;
                         y++;
                     }
                     x++;

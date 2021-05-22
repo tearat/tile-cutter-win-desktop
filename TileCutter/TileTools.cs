@@ -28,16 +28,7 @@ namespace TileCutter
             return chunk;
         }
 
-        public static void WriteTile(MagickImage chunk, Point point, int zoom)
-        {
-            if (chunk is null)
-                throw new ArgumentNullException($"{nameof(chunk)} can't be null", nameof(chunk));
-
-            string fullPath = InternalCreateDirectoryStructure(point, zoom);
-            chunk.Write(fullPath);
-        }
-
-        private static string InternalCreateDirectoryStructure(Point point, int zoom)
+        public static string CreateDirectoryStructure(Point point, int zoom)
         {
             string zoomPath = $"./tiles/{zoom}";
             if (!Directory.Exists(zoomPath))
