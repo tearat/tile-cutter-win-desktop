@@ -33,6 +33,12 @@ namespace TileCutter
             if (chunk is null)
                 throw new ArgumentNullException($"{nameof(chunk)} can't be null", nameof(chunk));
 
+            string fullPath = InternalCreateDirectoryStructure(point, zoom);
+            chunk.Write(fullPath);
+        }
+
+        private static string InternalCreateDirectoryStructure(Point point, int zoom)
+        {
             string zoomPath = $"./tiles/{zoom}";
             if (!Directory.Exists(zoomPath))
                 Directory.CreateDirectory(zoomPath);
@@ -41,8 +47,7 @@ namespace TileCutter
             if (!Directory.Exists(xPath))
                 Directory.CreateDirectory(xPath);
 
-            string fullPath = $"./tiles/{zoom}/{point.X}/{point.Y}.png";
-            chunk.Write(fullPath);
+            return $"./tiles/{zoom}/{point.X}/{point.Y}.png";
         }
     }
 }
