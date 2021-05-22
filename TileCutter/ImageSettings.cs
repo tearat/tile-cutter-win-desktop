@@ -5,9 +5,9 @@ namespace TileCutter
 {
     public class ImageSettings
     {
-        public int Zoom { get; set; }
-        public int Chunks { get; set; }
-        public MagickImage Image { get; set; }
+        public int Zoom { get; }
+        public int Chunks { get; }
+        public MagickImage Image { get; }
 
         public ImageSettings(int zoom, int chunks, MagickImage image)
         {
