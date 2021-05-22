@@ -13,7 +13,7 @@ namespace TileCutter
         {
             Zoom = zoom;
             Chunks = chunks > 0 ? chunks : throw new ArgumentNullException($"{nameof(chunks)} can't be negative", nameof(chunks));
-            Image = image ?? throw new ArgumentNullException($"{nameof(image)} can't be null", nameof(image));
+            Image = image ?? throw new ArgumentOutOfRangeException($"{nameof(image)} can't be null", nameof(image));
         }
     }
 }
