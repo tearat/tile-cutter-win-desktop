@@ -66,27 +66,27 @@ namespace TileCutter
 
             var width = image.Width;
             var height = image.Height;
-            Log("Size: " + width + " : " + height);
+            Log($"Size: {width} : {height}");
 
-            var columns = (int) Math.Ceiling((decimal)width / tileSize);
-            var rows = (int) Math.Ceiling((decimal)height / tileSize);
-            Log("Columns: " + columns + ", rows: " + rows);
+            var columns = (int)Math.Ceiling((decimal)width / tileSize);
+            var rows = (int)Math.Ceiling((decimal)height / tileSize);
+            Log($"Columns: {columns}, rows: {rows}");
 
             // Calculate max zoom level
             int[] anArray = { columns, rows };
             var maxChunksCount = anArray.Max();
-            Log("Calculated chunks count: " + maxChunksCount);
+            Log($"Calculated chunks count: {maxChunksCount}");
             int maxExp = 1;
             while (maxExp < maxChunksCount)
                 maxExp *= 2;
-            Log("Calculated zoom levels: " + maxExp);
+            Log($"Calculated zoom levels: {maxExp}");
 
             // Create a blank image and composite our image into
             var newSize = maxExp * tileSize;
             MagickColor fillColor = new MagickColor(backgroundColor);
             var resizedMax = new MagickImage(fillColor, newSize, newSize);
             resizedMax.Composite(image, Gravity.Center, CompositeOperator.Atop);
-            Log("Max image size: " + resizedMax.Width + " : " + resizedMax.Height);
+            Log($"Max image size: {resizedMax.Width} : {resizedMax.Height}");
 
             // Calculate chunks number for every zoom level
             var images = new List<ImageSettings>();
@@ -94,7 +94,7 @@ namespace TileCutter
             var exp = 1;
             while (exp <= maxExp)
             {
-                Log("Resizing image to zoom " + zoom);
+                Log($"Resizing image to zoom {zoom}");
                 var zoomSize = exp * tileSize;
                 MagickImage newImage = (MagickImage)resizedMax.Clone();
                 newImage.Resize(zoomSize, zoomSize);
@@ -105,7 +105,8 @@ namespace TileCutter
 
             // Create a folder if not exist and empty old tiles
             string tilesPath = "./tiles";
-            if (!Directory.Exists(tilesPath)) Directory.CreateDirectory(tilesPath);
+            if (!Directory.Exists(tilesPath))
+                Directory.CreateDirectory(tilesPath);
             DirectoryInfo tilesDirectory = new DirectoryInfo(tilesPath);
             foreach (FileInfo file in tilesDirectory.GetFiles()) file.Delete();
 
@@ -121,7 +122,7 @@ namespace TileCutter
                     for (y = 0; y < chunks_count; y++)
                         progressBarblocksCount++;
             });
-            Log("progressBar blocksCount: " + progressBarblocksCount);
+            Log($"progressBar blocksCount: {progressBarblocksCount}");
             progressBar.Maximum = progressBarblocksCount;
             progressBar.Value = 0;
 
@@ -130,7 +131,7 @@ namespace TileCutter
             images.ForEach((ImageSettings img) =>
             {
                 int chunks_count = img.Chunks;
-                Log("Making tiles for zoom " + img.Zoom);
+                Log($"Making tiles for zoom {img.Zoom}");
                 x = 0;
                 while (x < chunks_count)
                 {
@@ -148,7 +149,7 @@ namespace TileCutter
             });
             Log("Work done");
             stopwatch.Stop();
-            Log("Time: " + stopwatch.Elapsed.ToString());
+            Log($"Time: {stopwatch.Elapsed}");
         }
 
         private MagickImage MakeTile(MagickImage image, int x, int y, int tileSize)
