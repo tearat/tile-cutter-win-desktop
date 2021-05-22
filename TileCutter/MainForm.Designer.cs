@@ -28,24 +28,31 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.selectLabel = new System.Windows.Forms.Label();
             this.selectStatusLabel = new System.Windows.Forms.Label();
             this.selectButton = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.tabSizeLabel = new System.Windows.Forms.Label();
+            this.tileSizeLabel = new System.Windows.Forms.Label();
             this.backgroundColorLabel = new System.Windows.Forms.Label();
             this.extensionLabel = new System.Windows.Forms.Label();
             this.backgroundColorValue = new System.Windows.Forms.TextBox();
             this.extensionValue = new System.Windows.Forms.ComboBox();
             this.cutButton = new System.Windows.Forms.Button();
-            this.label0 = new System.Windows.Forms.Label();
+            this.titleLabel = new System.Windows.Forms.Label();
             this.label_path_error = new System.Windows.Forms.Label();
             this.label_size_error = new System.Windows.Forms.Label();
             this.label_color_error = new System.Windows.Forms.Label();
-            this.tabSizeValue = new System.Windows.Forms.NumericUpDown();
+            this.tileSizeValue = new System.Windows.Forms.NumericUpDown();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.logListBox = new System.Windows.Forms.ListBox();
-            ((System.ComponentModel.ISupportInitialize)(this.tabSizeValue)).BeginInit();
+            this.tileSizeErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.backgroundColorErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            this.selectErrorProvider = new System.Windows.Forms.ErrorProvider(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.tileSizeValue)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tileSizeErrorProvider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.backgroundColorErrorProvider)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.selectErrorProvider)).BeginInit();
             this.SuspendLayout();
             // 
             // selectLabel
@@ -82,15 +89,22 @@
             this.selectButton.UseVisualStyleBackColor = false;
             this.selectButton.Click += new System.EventHandler(this.selectButton_Click);
             // 
-            // tabSizeLabel
+            // openFileDialog
             // 
-            this.tabSizeLabel.AutoSize = true;
-            this.tabSizeLabel.Location = new System.Drawing.Point(12, 169);
-            this.tabSizeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.tabSizeLabel.Name = "tabSizeLabel";
-            this.tabSizeLabel.Size = new System.Drawing.Size(64, 17);
-            this.tabSizeLabel.TabIndex = 3;
-            this.tabSizeLabel.Text = "Tile size:";
+            this.openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png|All files (*.*)|*.*";
+            this.openFileDialog.InitialDirectory = "C:\\\\";
+            this.openFileDialog.RestoreDirectory = true;
+            this.openFileDialog.Title = "Open Image";
+            // 
+            // tileSizeLabel
+            // 
+            this.tileSizeLabel.AutoSize = true;
+            this.tileSizeLabel.Location = new System.Drawing.Point(12, 169);
+            this.tileSizeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.tileSizeLabel.Name = "tileSizeLabel";
+            this.tileSizeLabel.Size = new System.Drawing.Size(64, 17);
+            this.tileSizeLabel.TabIndex = 3;
+            this.tileSizeLabel.Text = "Tile size:";
             // 
             // backgroundColorLabel
             // 
@@ -151,16 +165,16 @@
             this.cutButton.UseVisualStyleBackColor = false;
             this.cutButton.Click += new System.EventHandler(this.cutButton_Click);
             // 
-            // label0
+            // titleLabel
             // 
-            this.label0.AutoSize = true;
-            this.label0.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label0.Location = new System.Drawing.Point(319, 11);
-            this.label0.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label0.Name = "label0";
-            this.label0.Size = new System.Drawing.Size(241, 31);
-            this.label0.TabIndex = 0;
-            this.label0.Text = "TileCutter Desktop";
+            this.titleLabel.AutoSize = true;
+            this.titleLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.titleLabel.Location = new System.Drawing.Point(319, 11);
+            this.titleLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.titleLabel.Name = "titleLabel";
+            this.titleLabel.Size = new System.Drawing.Size(241, 31);
+            this.titleLabel.TabIndex = 0;
+            this.titleLabel.Text = "TileCutter Desktop";
             // 
             // label_path_error
             // 
@@ -192,19 +206,19 @@
             this.label_color_error.Size = new System.Drawing.Size(0, 17);
             this.label_color_error.TabIndex = 9;
             // 
-            // tabSizeValue
+            // tileSizeValue
             // 
-            this.tabSizeValue.Location = new System.Drawing.Point(145, 166);
-            this.tabSizeValue.Margin = new System.Windows.Forms.Padding(4);
-            this.tabSizeValue.Maximum = new decimal(new int[] {
+            this.tileSizeValue.Location = new System.Drawing.Point(145, 166);
+            this.tileSizeValue.Margin = new System.Windows.Forms.Padding(4);
+            this.tileSizeValue.Maximum = new decimal(new int[] {
             4096,
             0,
             0,
             0});
-            this.tabSizeValue.Name = "tabSizeValue";
-            this.tabSizeValue.Size = new System.Drawing.Size(133, 22);
-            this.tabSizeValue.TabIndex = 10;
-            this.tabSizeValue.Value = new decimal(new int[] {
+            this.tileSizeValue.Name = "tileSizeValue";
+            this.tileSizeValue.Size = new System.Drawing.Size(133, 22);
+            this.tileSizeValue.TabIndex = 10;
+            this.tileSizeValue.Value = new decimal(new int[] {
             256,
             0,
             0,
@@ -229,6 +243,18 @@
             this.logListBox.Size = new System.Drawing.Size(432, 244);
             this.logListBox.TabIndex = 12;
             // 
+            // tileSizeErrorProvider
+            // 
+            this.tileSizeErrorProvider.ContainerControl = this;
+            // 
+            // backgroundColorErrorProvider
+            // 
+            this.backgroundColorErrorProvider.ContainerControl = this;
+            // 
+            // selectErrorProvider
+            // 
+            this.selectErrorProvider.ContainerControl = this;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -236,24 +262,31 @@
             this.ClientSize = new System.Drawing.Size(929, 379);
             this.Controls.Add(this.logListBox);
             this.Controls.Add(this.progressBar);
-            this.Controls.Add(this.tabSizeValue);
+            this.Controls.Add(this.tileSizeValue);
             this.Controls.Add(this.label_color_error);
             this.Controls.Add(this.label_size_error);
             this.Controls.Add(this.label_path_error);
-            this.Controls.Add(this.label0);
+            this.Controls.Add(this.titleLabel);
             this.Controls.Add(this.cutButton);
             this.Controls.Add(this.extensionValue);
             this.Controls.Add(this.backgroundColorValue);
             this.Controls.Add(this.extensionLabel);
             this.Controls.Add(this.backgroundColorLabel);
-            this.Controls.Add(this.tabSizeLabel);
+            this.Controls.Add(this.tileSizeLabel);
             this.Controls.Add(this.selectButton);
             this.Controls.Add(this.selectStatusLabel);
             this.Controls.Add(this.selectLabel);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(4);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "MainForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "TileCutter Desktop";
-            ((System.ComponentModel.ISupportInitialize)(this.tabSizeValue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tileSizeValue)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tileSizeErrorProvider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.backgroundColorErrorProvider)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.selectErrorProvider)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -265,19 +298,22 @@
         private System.Windows.Forms.Label selectStatusLabel;
         private System.Windows.Forms.Button selectButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
-        private System.Windows.Forms.Label tabSizeLabel;
+        private System.Windows.Forms.Label tileSizeLabel;
         private System.Windows.Forms.Label backgroundColorLabel;
         private System.Windows.Forms.Label extensionLabel;
         private System.Windows.Forms.TextBox backgroundColorValue;
         private System.Windows.Forms.ComboBox extensionValue;
         private System.Windows.Forms.Button cutButton;
-        private System.Windows.Forms.Label label0;
+        private System.Windows.Forms.Label titleLabel;
         private System.Windows.Forms.Label label_path_error;
         private System.Windows.Forms.Label label_size_error;
         private System.Windows.Forms.Label label_color_error;
-        private System.Windows.Forms.NumericUpDown tabSizeValue;
+        private System.Windows.Forms.NumericUpDown tileSizeValue;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.ListBox logListBox;
+        private System.Windows.Forms.ErrorProvider tileSizeErrorProvider;
+        private System.Windows.Forms.ErrorProvider backgroundColorErrorProvider;
+        private System.Windows.Forms.ErrorProvider selectErrorProvider;
     }
 }
 
