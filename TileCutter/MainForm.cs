@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -138,8 +139,8 @@ namespace TileCutter
                     y = 0;
                     while (y < chunks_count)
                     {
-                        var chunk = MakeTile(img.Image, x, y, tileSize);
-                        WriteTile(chunk, x, y, img.Zoom);
+                        var chunk = TileTools.MakeTile(img.Image, new Point(x, y), tileSize);
+                        TileTools.WriteTile(chunk, new Point(x, y), img.Zoom);
                         progressBar.Value++;
                         tiles_done++;
                         y++;
@@ -150,36 +151,6 @@ namespace TileCutter
             Log("Work done");
             stopwatch.Stop();
             Log($"Time: {stopwatch.Elapsed}");
-        }
-
-        private MagickImage MakeTile(MagickImage image, int x, int y, int tileSize)
-        {
-            MagickGeometry geometry = new MagickGeometry
-            {
-                Width = tileSize,
-                Height = tileSize,
-                X = x * tileSize,
-                Y = y * tileSize
-            };
-
-            MagickImage chunk = (MagickImage)image.Clone();
-            chunk.Crop(geometry);
-            chunk.Format = MagickFormat.Png;
-            return chunk;
-        }
-
-        private void WriteTile(MagickImage chunk, int x, int y, int zoom)
-        {
-            string zoomPath = $"./tiles/{zoom}";
-            if (!Directory.Exists(zoomPath))
-                Directory.CreateDirectory(zoomPath);
-
-            string xPath = $"./tiles/{zoom}/{x}";
-            if (!Directory.Exists(xPath))
-                Directory.CreateDirectory(xPath);
-            
-            string fullPath = $"./tiles/{zoom}/{x}/{y}.png";
-            chunk.Write(fullPath);
         }
 
         private void Log(string text)
