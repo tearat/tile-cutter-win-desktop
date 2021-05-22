@@ -105,8 +105,6 @@ namespace TileCutter
 
             // Create a folder if not exist and empty old tiles
             string tilesPath = "./tiles";
-            if (Directory.Exists(tilesPath))
-                MessageBox.Show(Path.GetFullPath(tilesPath));
             if (!Directory.Exists(tilesPath)) Directory.CreateDirectory(tilesPath);
             DirectoryInfo tilesDirectory = new DirectoryInfo(tilesPath);
             foreach (FileInfo file in tilesDirectory.GetFiles()) file.Delete();
