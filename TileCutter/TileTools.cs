@@ -10,9 +10,9 @@ namespace TileCutter
         public static MagickImage MakeTile(MagickImage image, Point point, int tileSize)
         {
             if (image is null)
-                throw new ArgumentNullException($"{nameof(image)} can't be null", nameof(image));
+                throw new ArgumentNullException(nameof(image), $"{nameof(image)} can't be null");
             if (tileSize < 0)
-                throw new ArgumentOutOfRangeException($"{nameof(tileSize)} can't be negative", nameof(tileSize));
+                throw new ArgumentOutOfRangeException(nameof(tileSize), $"{nameof(image)} can't be null");
 
             MagickGeometry geometry = new MagickGeometry
             {
