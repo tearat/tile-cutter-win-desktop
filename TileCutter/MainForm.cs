@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -63,45 +64,13 @@ namespace TileCutter
             stopwatch.Start();
 
             var image = new MagickImage(path);
-
-            var width = image.Width;
-            var height = image.Height;
-            Log($"Size: {width} : {height}");
-
-            var columns = (int)Math.Ceiling((decimal)width / tileSize);
-            var rows = (int)Math.Ceiling((decimal)height / tileSize);
-            Log($"Columns: {columns}, rows: {rows}");
-
-            var maxChunksCount = Math.Max(columns, rows);
-            Log($"Calculated chunks count: {maxChunksCount}");
-            int maxExp = 1;
-            while (maxExp < maxChunksCount)
-                maxExp *= 2;
-            Log($"Calculated zoom levels: {maxExp}");
-
-            // Create a blank image and composite our image into
-            var newSize = maxExp * tileSize;
-            MagickColor fillColor = new MagickColor(backgroundColor);
-            var resizedMax = new MagickImage(fillColor, newSize, newSize);
-            resizedMax.Composite(image, Gravity.Center, CompositeOperator.Atop);
+            var maxExp = CalculateMaxExp(image.Width, image.Height, tileSize);
+            var maxSize = maxExp * tileSize;
+            var resizedMax = GetFullImageWithBackground(image, backgroundColor, maxSize);
             image.Dispose();
-            Log($"Max image size: {resizedMax.Width} : {resizedMax.Height}");
 
             // Calculate chunks number for every zoom level
-            var images = new List<ImageSettings>();
-            var zoom = 0;
-            var exp = 1;
-            while (exp <= maxExp)
-            {
-                Log($"Resizing image to zoom {zoom}");
-                var zoomSize = exp * tileSize;
-                MagickImage newImage = (MagickImage)resizedMax.Clone();
-                newImage.Resize(zoomSize, zoomSize);
-                images.Add(new ImageSettings(zoom, exp, newImage));
-                zoom++;
-                exp *= 2;
-            }
-            
+            var images = GetImagesForChunks(resizedMax, maxExp, tileSize);
             resizedMax.Dispose();
 
             // Create a folder if not exist and empty old tiles
@@ -155,6 +124,58 @@ namespace TileCutter
             Log("Work done");
             stopwatch.Stop();
             Log($"Time: {stopwatch.Elapsed}");
+        }
+
+        private MagickImage GetFullImageWithBackground(MagickImage image, string backgroundColor, int size)
+        {
+            var fillColor = new MagickColor(backgroundColor);
+            var resizedMax = new MagickImage(fillColor, size, size);
+            resizedMax.Composite(image, Gravity.Center, CompositeOperator.Atop);
+
+            Log($"Max image size: {resizedMax.Width} : {resizedMax.Height}");
+
+            return resizedMax;
+        }
+
+        private List<ImageSettings> GetImagesForChunks(MagickImage image, int maxExp, int tileSize)
+        {
+            var images = new List<ImageSettings>();
+            var zoom = 0;
+            var exp = 1;
+            while (exp <= maxExp)
+            {
+                Log($"Resizing image to zoom {zoom}");
+                var zoomSize = exp * tileSize;
+                MagickImage newImage = (MagickImage)image.Clone();
+                newImage.Resize(zoomSize, zoomSize);
+                images.Add(new ImageSettings(zoom, exp, newImage));
+                zoom++;
+                exp *= 2;
+            }
+
+            return images;
+        }
+
+        private int CalculateMaxExp(int width, int height, int tileSize)
+        {
+            Log($"Size: {width} : {height}");
+            
+            var columns = (int)Math.Ceiling((decimal)width / tileSize);
+            var rows = (int)Math.Ceiling((decimal)height / tileSize);
+            
+            Log($"Columns: {columns}, rows: {rows}");
+            
+            var maxChunksCount = Math.Max(columns, rows);
+            
+            Log($"Calculated chunks count: {maxChunksCount}");
+            
+            var maxExp = 1;
+            while (maxExp < maxChunksCount)
+                maxExp *= 2;
+            
+            Log($"Calculated zoom levels: {maxExp}");
+
+            return maxExp;
         }
 
         private void Log(string text)
