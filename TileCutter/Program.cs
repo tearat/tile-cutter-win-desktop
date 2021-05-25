@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 
 namespace TileCutter
@@ -11,6 +12,8 @@ namespace TileCutter
         [STAThread]
         static void Main()
         {
+            TileTools.TilesRootPath = Path.Combine(".", "tiles");
+            
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());

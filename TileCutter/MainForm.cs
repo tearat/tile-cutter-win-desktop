@@ -73,14 +73,6 @@ namespace TileCutter
             var images = GetImagesForChunks(resizedMax, maxExp, tileSize);
             resizedMax.Dispose();
 
-            // Create a folder if not exist and empty old tiles
-            const string tilesPath = "./tiles";
-            if (!Directory.Exists(tilesPath))
-                Directory.CreateDirectory(tilesPath);
-            var tilesDirectory = new DirectoryInfo(tilesPath);
-            foreach (var file in tilesDirectory.GetFiles())
-                file.Delete();
-
             var progressBarMaximum = images.Sum(i => i.Chunks * i.Chunks);
             
             Log($"progressBar blocksCount: {progressBarMaximum}");
@@ -89,6 +81,8 @@ namespace TileCutter
 
             // Cutting the tiles and save to folders
             var tilesDone = 0;
+            
+            TileTools.SetupRootPathForNewTiles();
             images.ForEach(imageSettings =>
             {
                 Log($"Making tiles for zoom {imageSettings.Zoom}");

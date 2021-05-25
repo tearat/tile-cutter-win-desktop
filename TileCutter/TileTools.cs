@@ -7,6 +7,8 @@ namespace TileCutter
 {
     public static class TileTools
     {
+        public static string TilesRootPath;
+        
         public static MagickImage MakeTile(MagickImage image, Point point, int tileSize)
         {
             if (image is null)
@@ -28,17 +30,31 @@ namespace TileCutter
             return chunk;
         }
 
+        public static void SetupRootPathForNewTiles()
+        {
+            if (string.IsNullOrEmpty(TilesRootPath))
+                throw new ArgumentNullException($"{nameof(TilesRootPath)} can't be empty");
+
+            if (!Directory.Exists(TilesRootPath)) Directory.CreateDirectory(TilesRootPath);
+            else
+            {
+                var di = new DirectoryInfo(TilesRootPath);
+                foreach (var directory in di.GetDirectories()) directory.Delete(true);
+            }
+        }
+
         public static string CreateDirectoryStructure(Point point, int zoom)
         {
-            var zoomPath = $"./tiles/{zoom}";
+            var zoomPath = Path.Combine(TilesRootPath, zoom.ToString());
             if (!Directory.Exists(zoomPath))
                 Directory.CreateDirectory(zoomPath);
 
-            var xPath = $"./tiles/{zoom}/{point.X}";
+            var xPath = Path.Combine(zoomPath, point.X.ToString());
             if (!Directory.Exists(xPath))
                 Directory.CreateDirectory(xPath);
 
-            return $"./tiles/{zoom}/{point.X}/{point.Y}.png";
+            var path = Path.Combine(xPath, $"{point.Y}.png");
+            return path;
         }
     }
 }
