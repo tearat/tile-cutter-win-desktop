@@ -14,7 +14,7 @@ namespace TileCutter
             if (tileSize < 0)
                 throw new ArgumentOutOfRangeException($"{nameof(tileSize)} can't be negative", nameof(tileSize));
 
-            MagickGeometry geometry = new MagickGeometry
+            var geometry = new MagickGeometry
             {
                 Width = tileSize,
                 Height = tileSize,
@@ -22,7 +22,7 @@ namespace TileCutter
                 Y = point.Y * tileSize
             };
 
-            MagickImage chunk = (MagickImage)image.Clone();
+            var chunk = (MagickImage)image.Clone();
             chunk.Crop(geometry);
             chunk.Format = MagickFormat.Png;
             return chunk;
@@ -30,11 +30,11 @@ namespace TileCutter
 
         public static string CreateDirectoryStructure(Point point, int zoom)
         {
-            string zoomPath = $"./tiles/{zoom}";
+            var zoomPath = $"./tiles/{zoom}";
             if (!Directory.Exists(zoomPath))
                 Directory.CreateDirectory(zoomPath);
 
-            string xPath = $"./tiles/{zoom}/{point.X}";
+            var xPath = $"./tiles/{zoom}/{point.X}";
             if (!Directory.Exists(xPath))
                 Directory.CreateDirectory(xPath);
 

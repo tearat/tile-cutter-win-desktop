@@ -29,7 +29,7 @@ namespace TileCutter
             var tileSize = tileSizeValue.Text;
             var backgrouncColor = backgroundColorValue.Text;
 
-            bool erroneousInput = false;
+            var erroneousInput = false;
             selectErrorProvider.SetError(selectButton, string.Empty);
             tileSizeErrorProvider.SetError(tileSizeValue, string.Empty);
             backgroundColorErrorProvider.SetError(backgroundColorValue, string.Empty);
@@ -60,7 +60,7 @@ namespace TileCutter
 
         private void CutTiles(string path, int tileSize, string backgroundColor)
         {
-            Stopwatch stopwatch = new Stopwatch();
+            var stopwatch = new Stopwatch();
             stopwatch.Start();
 
             var image = new MagickImage(path);
@@ -78,7 +78,7 @@ namespace TileCutter
             if (!Directory.Exists(tilesPath))
                 Directory.CreateDirectory(tilesPath);
             var tilesDirectory = new DirectoryInfo(tilesPath);
-            foreach (FileInfo file in tilesDirectory.GetFiles())
+            foreach (var file in tilesDirectory.GetFiles())
                 file.Delete();
 
             var progressBarMaximum = images.Sum(i => i.Chunks * i.Chunks);
@@ -88,7 +88,7 @@ namespace TileCutter
             progressBar.Value = 0;
 
             // Cutting the tiles and save to folders
-            int tilesDone = 0;
+            var tilesDone = 0;
             images.ForEach(imageSettings =>
             {
                 Log($"Making tiles for zoom {imageSettings.Zoom}");
@@ -135,7 +135,7 @@ namespace TileCutter
             {
                 Log($"Resizing image to zoom {zoom}");
                 var zoomSize = exp * tileSize;
-                MagickImage newImage = (MagickImage)image.Clone();
+                var newImage = (MagickImage)image.Clone();
                 newImage.Resize(zoomSize, zoomSize);
                 images.Add(new ImageSettings(zoom, exp, newImage));
                 zoom++;
