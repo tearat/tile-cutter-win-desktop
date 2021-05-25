@@ -92,11 +92,13 @@ namespace TileCutter
                     var y = 0;
                     while (y < imageSettings.Chunks)
                     {
-                        using (var chunk = TileTools.MakeTile(imageSettings.Image, new Point(x, y), tileSize))
+                        var imageToChunk = new MagickImage(imageSettings.ImagePath);
+                        using (var chunk = TileTools.MakeTile(imageToChunk, new Point(x, y), tileSize))
                         {
                             var fullPath = TileTools.CreateDirectoryStructure(new Point(x, y), imageSettings.Zoom);
                             chunk.Write(fullPath);
                         }
+
                         progressBar.Value++;
                         tilesDone++;
                         y++;
@@ -129,13 +131,15 @@ namespace TileCutter
             {
                 Log($"Resizing image to zoom {zoom}");
                 var zoomSize = exp * tileSize;
-                var newImage = (MagickImage) image.Clone();
-                newImage.Resize(zoomSize, zoomSize);
-                var newImagePath = Path.Combine(TileTools.TilesRootPath, $"{exp}_{zoomSize}.png");
-                newImage.Write(newImagePath);
-                images.Add(new ImageSettings(zoom, exp, newImage));
-                zoom++;
-                exp *= 2;
+                using (var newImage = (MagickImage) image.Clone())
+                {
+                    newImage.Resize(zoomSize, zoomSize);
+                    var newImagePath = Path.Combine(TileTools.TilesRootPath, $"{exp}_{zoomSize}.png");
+                    newImage.Write(newImagePath);
+                    images.Add(new ImageSettings(zoom, exp, newImagePath));
+                    zoom++;
+                    exp *= 2;
+                }
             }
 
             return images;
