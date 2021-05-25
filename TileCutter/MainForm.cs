@@ -104,7 +104,7 @@ namespace TileCutter
                     x++;
                 }
             });
-            Log("Work done");
+            Log($"Work done, {nameof(tilesDone)}: {tilesDone}");
             stopwatch.Stop();
             Log($"Time: {stopwatch.Elapsed}");
         }
