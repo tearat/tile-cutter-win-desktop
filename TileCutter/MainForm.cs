@@ -129,8 +129,10 @@ namespace TileCutter
             {
                 Log($"Resizing image to zoom {zoom}");
                 var zoomSize = exp * tileSize;
-                var newImage = (MagickImage)image.Clone();
+                var newImage = (MagickImage) image.Clone();
                 newImage.Resize(zoomSize, zoomSize);
+                var newImagePath = Path.Combine(TileTools.TilesRootPath, $"{exp}_{zoomSize}.png");
+                newImage.Write(newImagePath);
                 images.Add(new ImageSettings(zoom, exp, newImage));
                 zoom++;
                 exp *= 2;
