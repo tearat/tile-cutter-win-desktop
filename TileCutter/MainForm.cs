@@ -77,7 +77,7 @@ namespace TileCutter
             const string tilesPath = "./tiles";
             if (!Directory.Exists(tilesPath))
                 Directory.CreateDirectory(tilesPath);
-            DirectoryInfo tilesDirectory = new DirectoryInfo(tilesPath);
+            var tilesDirectory = new DirectoryInfo(tilesPath);
             foreach (FileInfo file in tilesDirectory.GetFiles())
                 file.Delete();
 
@@ -99,19 +99,18 @@ namespace TileCutter
 
             // Cutting the tiles and save to folders
             int tilesDone = 0;
-            images.ForEach((ImageSettings imageSettings) =>
+            images.ForEach(imageSettings =>
             {
-                int chunksCount = imageSettings.Chunks;
                 Log($"Making tiles for zoom {imageSettings.Zoom}");
-                x = 0;
-                while (x < chunksCount)
+                var x = 0;
+                while (x < imageSettings.Chunks)
                 {
-                    y = 0;
-                    while (y < chunksCount)
+                    var y = 0;
+                    while (y < imageSettings.Chunks)
                     {
                         using (var chunk = TileTools.MakeTile(imageSettings.Image, new Point(x, y), tileSize))
                         {
-                            string fullPath = TileTools.CreateDirectoryStructure(new Point(x, y), imageSettings.Zoom);
+                            var fullPath = TileTools.CreateDirectoryStructure(new Point(x, y), imageSettings.Zoom);
                             chunk.Write(fullPath);
                         }
                         progressBar.Value++;
