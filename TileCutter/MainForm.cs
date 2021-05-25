@@ -92,11 +92,13 @@ namespace TileCutter
                     var y = 0;
                     while (y < imageSettings.Chunks)
                     {
-                        var imageToChunk = new MagickImage(imageSettings.ImagePath);
-                        using (var chunk = TileTools.MakeTile(imageToChunk, new Point(x, y), tileSize))
+                        using (var imageToChunk = new MagickImage(imageSettings.ImagePath))
                         {
-                            var fullPath = TileTools.CreateDirectoryStructure(new Point(x, y), imageSettings.Zoom);
-                            chunk.Write(fullPath);
+                            using (var chunk = TileTools.MakeTile(imageToChunk, new Point(x, y), tileSize))
+                            {
+                                var fullPath = TileTools.CreateDirectoryStructure(new Point(x, y), imageSettings.Zoom);
+                                chunk.Write(fullPath);
+                            }
                         }
 
                         progressBar.Value++;
@@ -113,13 +115,16 @@ namespace TileCutter
 
         private MagickImage GetFullImageWithBackground(MagickImage image, string backgroundColor, int size)
         {
-            var fillColor = new MagickColor(backgroundColor);
-            var resizedMax = new MagickImage(fillColor, size, size);
-            resizedMax.Composite(image, Gravity.Center, CompositeOperator.Atop);
+            using (image)
+            {
+                var fillColor = new MagickColor(backgroundColor);
+                var resizedMax = new MagickImage(fillColor, size, size);
+                resizedMax.Composite(image, Gravity.Center, CompositeOperator.Atop);
 
-            Log($"Max image size: {resizedMax.Width} : {resizedMax.Height}");
+                Log($"Max image size: {resizedMax.Width} : {resizedMax.Height}");
 
-            return resizedMax;
+                return resizedMax;
+            }
         }
 
         private List<ImageSettings> GetImagesForChunks(MagickImage image, int maxExp, int tileSize)

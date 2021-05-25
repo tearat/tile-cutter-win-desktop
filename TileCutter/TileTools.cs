@@ -16,18 +16,20 @@ namespace TileCutter
             if (tileSize < 0)
                 throw new ArgumentOutOfRangeException($"{nameof(tileSize)} can't be negative", nameof(tileSize));
 
-            var geometry = new MagickGeometry
+            using (image)
             {
-                Width = tileSize,
-                Height = tileSize,
-                X = point.X * tileSize,
-                Y = point.Y * tileSize
-            };
-
-            var chunk = (MagickImage)image.Clone();
-            chunk.Crop(geometry);
-            chunk.Format = MagickFormat.Png;
-            return chunk;
+                var geometry = new MagickGeometry
+                {
+                    Width = tileSize,
+                    Height = tileSize,
+                    X = point.X * tileSize,
+                    Y = point.Y * tileSize
+                };
+                var chunk = (MagickImage)image.Clone();
+                chunk.Crop(geometry);
+                chunk.Format = MagickFormat.Png;
+                return chunk;
+            }
         }
 
         public static void SetupRootPathForNewTiles()
