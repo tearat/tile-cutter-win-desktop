@@ -81,20 +81,10 @@ namespace TileCutter
             foreach (FileInfo file in tilesDirectory.GetFiles())
                 file.Delete();
 
-            int x = 0;
-            int y = 0;
-
-            // Calculate progressbar blocks
-            int progressBarblocksCount = 0;
-            images.ForEach((ImageSettings imageSettings) =>
-            {
-                int chunks_count = imageSettings.Chunks;
-                for (x = 0; x < chunks_count; x++)
-                    for (y = 0; y < chunks_count; y++)
-                        progressBarblocksCount++;
-            });
-            Log($"progressBar blocksCount: {progressBarblocksCount}");
-            progressBar.Maximum = progressBarblocksCount;
+            var progressBarMaximum = images.Sum(i => i.Chunks * i.Chunks);
+            
+            Log($"progressBar blocksCount: {progressBarMaximum}");
+            progressBar.Maximum = progressBarMaximum;
             progressBar.Value = 0;
 
             // Cutting the tiles and save to folders
