@@ -84,6 +84,7 @@ namespace TileCutter
             MagickColor fillColor = new MagickColor(backgroundColor);
             var resizedMax = new MagickImage(fillColor, newSize, newSize);
             resizedMax.Composite(image, Gravity.Center, CompositeOperator.Atop);
+            image.Dispose();
             Log($"Max image size: {resizedMax.Width} : {resizedMax.Height}");
 
             // Calculate chunks number for every zoom level
@@ -100,6 +101,8 @@ namespace TileCutter
                 zoom++;
                 exp *= 2;
             }
+            
+            resizedMax.Dispose();
 
             // Create a folder if not exist and empty old tiles
             const string tilesPath = "./tiles";
@@ -137,9 +140,11 @@ namespace TileCutter
                     y = 0;
                     while (y < chunksCount)
                     {
-                        var chunk = TileTools.MakeTile(imageSettings.Image, new Point(x, y), tileSize);
-                        string fullPath = TileTools.CreateDirectoryStructure(new Point(x, y), imageSettings.Zoom);
-                        chunk.Write(fullPath);
+                        using (var chunk = TileTools.MakeTile(imageSettings.Image, new Point(x, y), tileSize))
+                        {
+                            string fullPath = TileTools.CreateDirectoryStructure(new Point(x, y), imageSettings.Zoom);
+                            chunk.Write(fullPath);
+                        }
                         progressBar.Value++;
                         tilesDone++;
                         y++;
